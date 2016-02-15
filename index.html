@@ -47,7 +47,8 @@
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<p><code>npm install -g couchdb-dump</code></p>
+<p><code>npm install -g couchdb-dump</code>
+See also couchdb-dump on npm.</p>
 
 <h2>
 <a id="usage-examples" class="anchor" href="#usage-examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage Examples</h2>
@@ -59,6 +60,10 @@
 <p>If you are doing this for archiving purposes you could do something like this to extract and gzip by piping output ...</p>
 
 <p><code>cdbdump -d myhugedatabase | gzip &gt; myhugedatabase.json.gz</code></p>
+
+<p><a href="https://github.com/raffi-minassian/couchdb-dump/blob/master/README.md#cdbdump-full-usage">See the project README for more on the usage of the <code>cdbdump</code> command.</a></p>
+
+<hr>
 
 <p>Both of the following command examples will load all the documents in the <em>myhugedatabase.json</em> file into a CouchDB database called <em>myhugeduplicate</em>.</p>
 
@@ -72,9 +77,13 @@
 
 <p>... which streams all the docs from one CouchDB database into a second one. While this works well, you should probably take a look at using <a href="http://guide.couchdb.org/draft/replication.html">CouchDB's awesome built-in replication features</a> instead.</p>
 
+<p><a href="https://github.com/raffi-minassian/couchdb-dump/blob/master/README.md#cdbload-full-usage">See the project README for more on the usage of the <code>cdbload</code> command.</a></p>
+
+<hr>
+
 <p>But suppose you need to manipulate the documents in the <code>cdbdump</code> output before you load them into CouchDB with <code>cdbload</code>. You can do that with the included <code>cdbmorph</code> command.</p>
 
-<p>Lets assume you need to add a new key and value to all documents which meet certain criteria, and you need to delete documents which meet some other criteria. So you write a function as follows and save it in a file called <em>morph.js</em>. For example:</p>
+<p>Lets assume you need to add a new key and value to all documents which meet certain criteria, and you need to delete documents which meet some other criteria. So you <a href="https://github.com/raffi-minassian/couchdb-dump/blob/master/README.md#functiondoc-callback">write a function</a> as follows and save it in a file called <em>morph.js</em>. For example:</p>
 
 <pre><code>module.exports = function(doc, cb){
   if(doc.somekey &amp;&amp; doc.somekey === 'somevalue'){
@@ -99,127 +108,11 @@
 
 <p><code>cdbdump -k -d myhugedatabase | cdbmorph -f ./morph.js | cdbload -d myhugedatabase</code></p>
 
-<p><em>NOTE: This is not magic and it is not "real" in-place-updates so all the rules of CouchDB document updates with respect to</em> <strong>_rev</strong> <em>values, etc, still apply. Be mindful of this and other activity on the database if you do something like this. Also, be sure to apply the</em> <strong>-k</strong> <em>flag on the <code>cdbdump</code> command so that the documents in the output will include their</em> <strong>_rev</strong> <em>values.</em></p>
+<p><a href="https://github.com/raffi-minassian/couchdb-dump/blob/master/README.md#cdbmorph-full-usage">See the project README for more on the usage of the <code>cdbmorph</code> command.</a></p>
 
-<h2>
-<a id="cdbdump-full-usage" class="anchor" href="#cdbdump-full-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>cdbdump</code> Full Usage</h2>
+<hr>
 
-<p>If you execute the <code>cdbdump</code> command with no arguments or with --help, the following usage information will be printed on the console and the command will exit.</p>
-
-<p><code>usage: cdbdump [-u username] [-p password] [-h host] [-P port] [-r protocol] [-s json-stringify-space] [-k dont-strip-revs] [-D design doc] [-v view] -d database</code></p>
-
-<p>The username and password, if supplied, will be used for authentication via <a href="http://docs.couchdb.org/en/1.6.1/api/server/authn.html#api-auth-basic">Basic Auth (RFC2617)</a>. Currently this is the only supported authentication method.</p>
-
-<p>If you want to constrain the documents exported to only those that belong to a <a href="http://docs.couchdb.org/en/1.6.1/couchapp/ddocs.html">CouchDB View</a>, you can pass the <strong>-D</strong> and <strong>-v</strong> options to specify the design document and view function name respectively. This won't work with views that <em>reduce</em> or do other fancy things.</p>
-
-<p>The <strong>-s</strong> parameter for <code>cdbdump</code> is used as the third parameter to JSON.stringify() for the amount of white space to use if you want the output to be pretty-printed.</p>
-
-<h5>
-<a id="couchdb-revision-fields" class="anchor" href="#couchdb-revision-fields" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CouchDB revision fields</h5>
-
-<p>By default, the <code>_rev</code> element of every document is stripped out of the output of <code>cdbdump</code>. This allows the list of documents to be used as input to <code>cdbload</code>. If the <strong>-k</strong> parameter is given to <code>cdbdump</code>, then the <code>_rev</code> elements will <em>not</em> be stripped out and this will cause CouchDB to be unable to easily load these documents through the <code>_bulk_docs</code> endpoint because every document will error with a mismatched revision message (assuming you are loading into an empty database). See <a href="http://docs.couchdb.org/en/1.6.1/api/database/bulk-api.html#post--db-_bulk_docs">CouchDB _bulk_docs documentation</a> for more details and ways you can manipulate the <code>cdbdump</code> output to get around that in case you need to keep the <code>_rev</code> values in your dump.</p>
-
-<h4>
-<a id="default-options-for-cdbdump" class="anchor" href="#default-options-for-cdbdump" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default options for cdbdump</h4>
-
-<pre><code>host = localhost
-port = 5984
-protocol = http
-json-stringify-space = 0
-dont-strip-revs = false
-</code></pre>
-
-<h2>
-<a id="cdbload-full-usage" class="anchor" href="#cdbload-full-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>cdbload</code> Full Usage</h2>
-
-<p>If you execute the <code>cdbload</code> command with no arguments or with --help, the following usage information will be printed on the console and the command will exit.</p>
-
-<p><code>usage: cdbload [-u username] [-p password] [-h host] [-P port] [-r protocol] [-v verbose] -d database</code></p>
-
-<p>The <strong>-v</strong> parameter for <code>cdbload</code> will print CouchDB's response body to the console. That will be an array with one JSON result object for every object loaded in!!</p>
-
-<h4>
-<a id="default-options-for-cdbload" class="anchor" href="#default-options-for-cdbload" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default options for cdbload</h4>
-
-<pre><code>host = localhost
-port = 5984
-protocol = http
-verbose = false
-</code></pre>
-
-<h2>
-<a id="cdbmorph-full-usage" class="anchor" href="#cdbmorph-full-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>cdbmorph</code> Full Usage</h2>
-
-<p>If you execute the <code>cdbmorph</code> command with no arguments or with --help, the following usage information will be printed on the console and the command will exit.</p>
-
-<p><code>usage: cdbmorph [-s json-stringify-space] -f path-to-morphfunction.js</code></p>
-
-<p>The <strong>-f</strong> parameter is used to provide the path to the file containing the javascript function that will be applied to every document in the stream. The path can be an absolute path:</p>
-
-<p><code>cat dump.json | cdbmorph -f ~/morph.js</code></p>
-
-<p>... or a relative path to the file from current working directory that the <code>cdbmorph</code> command will be run from:</p>
-
-<p><code>cat dump.json | cdbmorph -f ../../../morph.js</code></p>
-
-<p>The file containing the morph function will be <em>required</em> into the script as follows:</p>
-
-<p><code>var morphfunction = require(path.resolve(process.cwd(), path-to-morphfunction.js));</code></p>
-
-<p>The morph function takes two arguments which are a CouchDB document and a callback.</p>
-
-<h4>
-<a id="functiondoc-callback" class="anchor" href="#functiondoc-callback" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>function(doc, callback)</h4>
-
-<h6>
-<a id="arguments" class="anchor" href="#arguments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Arguments</h6>
-
-<ul>
-<li>
-<code>doc</code> - A CouchDB document (json).</li>
-<li>
-<code>callback(err, doc)</code> - A callback function used to return the morphed document or an error. If an error is returned the unchanged document is included in the output stream and the error is printed on error.console. Returning <code>null</code> as the <em>doc</em> argument causes the original document to be excluded from the output.</li>
-</ul>
-
-<h6>
-<a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h6>
-
-<pre><code>module.exports = function(doc, cb){
-  if(doc.dontmod){
-    return cb(null, doc); //unmodified doc is passed through to the output
-  }
-  if(doc.theexclusionkey){
-    return cb(); //doc will not be in the output
-  }
-  if(doc.somekey &amp;&amp; doc.somekey === 'somevalue'){
-    doc.anotherkey = 'anothervalue'; //doc is modified in the output
-  }
-  if(doc.someotherkey &amp;&amp; doc.someotherkey === 'someothervalue'){
-    doc._deleted = true; //doc is a 'CouchDB deleted document' in the output
-  }
-  cb(null, doc);
-}
-</code></pre>
-
-<p>The <strong>-s</strong> parameter for <code>cdbmorph</code> is used as the third parameter to JSON.stringify() for the amount of white space to use if you want the output to be pretty-printed.</p>
-
-<h4>
-<a id="batch-document-modifications-on-a-couchdb-database-using-cdbmorph" class="anchor" href="#batch-document-modifications-on-a-couchdb-database-using-cdbmorph" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Batch document modifications on a CouchDB database using <code>cdbmorph</code>
-</h4>
-
-<p>As shown in the usage examples above, it is possible to pass the documents in a CouchDB database through <code>cdbmorph</code> for modification as follows:</p>
-
-<p><code>cdbdump -k -d dbname | cdbmorph -f ./morph.js | cdbload -d dbanme</code></p>
-
-<p>To make this work you must be sure to apply the <strong>-k</strong> flag on the <code>cdbdump</code> command so that the documents in the output will include their <strong>_rev</strong> values. By default those would be stripped out which is only appropriate if you are loading the documents into a database where they don't already exist.</p>
-
-<p>Be mindful of all the normal rules of CouchDB document updates with respect to <strong>_rev</strong> values, etc when performing this kind of operation.</p>
-
-<h4>
-<a id="default-options-for-cdbmorph" class="anchor" href="#default-options-for-cdbmorph" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default options for cdbmorph</h4>
-
-<pre><code>json-stringify-space = 0
-</code></pre>
+<p><a href="https://github.com/raffi-minassian/couchdb-dump/blob/master/README.md#release-history">Release History</a></p>
         </section>
 
         <aside id="sidebar">
