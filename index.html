@@ -31,20 +31,18 @@
           <h1>
 <a id="couchdb-dump" class="anchor" href="#couchdb-dump" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>couchdb-dump</h1>
 
-<p>A set of three command line tools that perform the following functions. One outputs all documents (including any attachments) in a <a href="http://couchdb.apache.org">CouchDB</a> database, one lets you provide a function that can modify the documents in that output, and one takes that output as input and loads it back into a CouchDB database.</p>
-
-<p>Reading and writing the data is done via stdin and stdout, respectively. The output of <code>cdbdump</code> is a JSON document containing a "docs" array element which contains every document in the database. The <code>cdbmorph</code> command takes the output of <code>cdbdump</code> and allows you to modify the documents in it by passing each of them through a function that you supply. The <code>cdbload</code> command takes an input which is exactly the same as the output of <code>cdbdump</code> or <code>cdbmorph</code> and writes every document in it into the target database.</p>
-
-<p>Internally, cdbdump and cdbload just calling on CouchDB's <a href="http://docs.couchdb.org/en/1.6.1/api/database/bulk-api.html#"><strong>_all_docs</strong></a> and <a href="http://docs.couchdb.org/en/1.6.1/api/database/bulk-api.html#post--db-_bulk_docs"><strong>_bulk_docs</strong></a> endpoints. To do what it does, this package uses the power of Node.js streams with the help of the following modules...</p>
+<p>A set of three command line tools that perform the following functions. </p>
 
 <ul>
-<li><a href="https://github.com/request/request">request</a></li>
-<li><a href="https://github.com/rvagg/through2">through2</a></li>
-<li><a href="https://github.com/creationix/jsonparse">jsonparse</a></li>
-<li><a href="https://github.com/substack/minimist">minimist</a></li>
+<li>
+<code>cdbdump</code> outputs all documents (including any attachments) in a <a href="http://couchdb.apache.org">CouchDB</a> database</li>
+<li>
+<code>cdbmorph</code> lets you provide a function that can modify the documents in that output</li>
+<li>
+<code>cdbload</code> takes that output as input and loads it back into a CouchDB database.</li>
 </ul>
 
-<p>Many thanks to the authors of those amazing packages for making this possible.</p>
+<p>Reading and writing the data is done via stdin and stdout, respectively. The output of <code>cdbdump</code> is a JSON document containing a "docs" array element which contains every document in the database. The <code>cdbmorph</code> command takes the output of <code>cdbdump</code> and allows you to modify the documents in it by passing each of them through a function that you supply. The <code>cdbload</code> command takes an input which is exactly the same as the output of <code>cdbdump</code> or <code>cdbmorph</code> and writes every document in it into the target database.</p>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
