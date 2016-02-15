@@ -42,7 +42,7 @@
 <code>cdbload</code> takes that output as input and loads it back into a CouchDB database.</li>
 </ul>
 
-<p>Reading and writing the data is done via stdin and stdout, respectively. The output of <code>cdbdump</code> is a JSON document containing a "docs" array element which contains every document in the database. The <code>cdbmorph</code> command takes the output of <code>cdbdump</code> and allows you to modify the documents in it by passing each of them through a function that you supply. The <code>cdbload</code> command takes an input which is exactly the same as the output of <code>cdbdump</code> or <code>cdbmorph</code> and writes every document in it into the target database.</p>
+<p>Reading and writing the data is done via stdin and stdout, respectively. The output of <code>cdbdump</code> is a JSON document containing a "docs" array element which contains the CouchDB database documents. The <code>cdbmorph</code> command takes the output of <code>cdbdump</code> and allows you to modify the documents in it by passing each of them through a function that you supply. The <code>cdbload</code> command takes an input which is exactly the same as the output of <code>cdbdump</code> or <code>cdbmorph</code> and writes every document in it into the target database.</p>
 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
@@ -56,7 +56,7 @@
 
 <p><code>cdbdump -d myhugedatabase &gt; myhugedatabase.json</code></p>
 
-<p>If you are doing this for archiving purposes you could do something cool like this to extract and gzip it in one step ...</p>
+<p>If you are doing this for archiving purposes you could do something like this to extract and gzip by piping output ...</p>
 
 <p><code>cdbdump -d myhugedatabase | gzip &gt; myhugedatabase.json.gz</code></p>
 
@@ -220,42 +220,6 @@ verbose = false
 
 <pre><code>json-stringify-space = 0
 </code></pre>
-
-<h2>
-<a id="why-another-couchdb-dump-command" class="anchor" href="#why-another-couchdb-dump-command" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why Another CouchDB Dump Command?</h2>
-
-<p>I originally wrote this because I couldn't find a cli dump tool for CouchDB that allowed me to pipe output directly. Since then I also found these other excellent options which you should definitely check out as well:</p>
-
-<ul>
-<li><a href="https://github.com/danielebailo/couchdb-dump">danielebailo/couchdb-dump</a></li>
-<li><a href="https://www.npmjs.com/package/pouchdb-dump-cli">pouchdb-dump-cli</a></li>
-<li><a href="https://www.npmjs.com/package/pouchdb-load">pouchdb-load</a></li>
-</ul>
-
-<p>With the addition of the <code>cdbmorph</code> command in release 2.2.0, this tool is now more than just a CouchDB dump command. It also provides convenient batch document manipulation features on the command line.</p>
-
-<h2>
-<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing</h2>
-
-<p>Still no automated tests in place. :\</p>
-
-<h2>
-<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h2>
-
-<p>Fork and PR. Thanks!!</p>
-
-<h2>
-<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Release History</h2>
-
-<ul>
-<li>2.2.1 Minor cleanup.</li>
-<li>2.2.0 Provides the <code>cdbmorph</code> command that lets you manipulate the documents in the stream between <code>cdbdump</code> and <code>cdbload</code> using a function you provide.</li>
-<li>2.1.0 Includes attachments as part of the dump. (Contributed by <a href="https://github.com/iddo">https://github.com/iddo</a>)</li>
-<li>2.0.0 Using latest through2 package instead of through.</li>
-<li>1.2.0 Support for dumping only docs which belong to a specified CouchDB design doc and view.</li>
-<li>1.1.0 Added Authentication options</li>
-<li>1.0.0 Initial release</li>
-</ul>
         </section>
 
         <aside id="sidebar">
